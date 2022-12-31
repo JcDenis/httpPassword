@@ -1,27 +1,26 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-# This file is part of httpPassword, a plugin for Dotclear.
-# 
-# Copyright (c) 2007-2009 Frederic PLE
-# dotclear@frederic.ple.name
-# 
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-# -- END LICENSE BLOCK ------------------------------------
+/**
+ * @brief httpPassword, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Frederic PLE and contributors
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_CONTEXT_ADMIN')) {
+    return null;
+}
 
-if (!defined('DC_CONTEXT_ADMIN')) { return; }
-
-$_menu['Plugins']->addItem('httpPassword',
-	'plugin.php?p=httpPassword',
-	'index.php?pf=httpPassword/icon.png',
-	preg_match('/plugin.php\?p=httpPassword(&.*)?$/',
-		$_SERVER['REQUEST_URI']),
-	$core->auth->check('usage,contentadmin',$core->blog->id)
+dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
+    __('Http password'),
+    dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+    urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+    preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__))) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+        dcAuth::PERMISSION_USAGE,
+        initHttpPassword::PERMISSION,
+    ]), dcCore::app()->blog->id)
 );
-
-$core->auth->setPermissionType(
-	'httpPassword',
-	'Gestion de la protection du site httpPassword'
-);
-?>
