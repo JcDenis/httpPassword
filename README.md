@@ -21,14 +21,13 @@ Its helps to manage .httppassword files to make a blog private.
   * httpPassword permission to configure
   * Dotclear 2.24
   * Write permissions on blogs directories
-  * A web server that support .htpassword files. (Apache)
 
 ## USAGE
 
 First install _httpPassword_, manualy from a zip package or from 
 Dotaddict repository. (See Dotclear's documentation to know how do this)
 
-...
+Manage settings, last logins, authorized users from sidebar menu _Http password_
 
 ## LINKS
 
