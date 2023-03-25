@@ -1,4 +1,8 @@
-1.0 - 20221230
+1.1 - 2023.03.25
+- require dotclear 2.26
+- use namespace
+
+1.0 - 2022.12.30
 - update to dotclear 2.24
 - change settings names
 - remove debug mode
