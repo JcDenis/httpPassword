@@ -10,20 +10,20 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class httpPassword
+namespace Dotclear\Plugin\httpPassword;
+
+use dcCore;
+
+class Utils
 {
-    public static function id(): string
-    {
-        return basename(dirname(__DIR__));
-    }
-
+    /**
+     * Crypt password
+     */
     public static function crypt(?string $secret): string
     {
-        switch (dcCore::app()->blog->settings->get(self::id())->get('crypt')) {
+        switch (self::cryptMethod()) {
             case 'plaintext':
                 $saltlen = -1;
                 $salt    = '';
@@ -75,9 +75,44 @@ class httpPassword
         return($secret);
     }
 
+    /**
+     * Setting: active
+     */
+    public static function isActive(): bool
+    {
+        return (bool) dcCore::app()->blog->settings->get(My::id())->get('active');
+    }
+
+    /**
+     * Setting: crypt
+     */
+    public static function cryptMethod(): string
+    {
+        return (string) dcCore::app()->blog->settings->get(My::id())->get('crypt');
+    }
+
+    /**
+     * Setting: message
+     */
+    public static function httpMessage(): string
+    {
+        return (string) dcCore::app()->blog->settings->get(My::id())->get('message');
+    }
+
+    /**
+     * Get passwords file path
+     */
+    public static function passwordFile(): string
+    {
+        return dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . My::FILE_PASSWORD;
+    }
+
+    /**
+     * Check passwords file
+     */
     public static function isWritable(): bool
     {
-        if (false === ($fp = fopen(dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . initHttpPassword::FILE_PASSWORD, 'a+'))) {
+        if (false === ($fp = fopen(self::passwordFile(), 'a+'))) {
             return false;
         }
         fclose($fp);
@@ -85,23 +120,13 @@ class httpPassword
         return true;
     }
 
-    public static function getCryptCombo(): array
-    {
-        return [
-            __('No encryption')      => 'plaintext',
-            __('Crypt DES standard') => 'crypt_std_des',
-            __('Crypt DES étendu')   => 'crypt_ext_des',
-            __('Crypt MD5')          => 'crypt_md5',
-            __('Crypt Blowfish')     => 'crypt_blowfish',
-            __('Crypt SHA256')       => 'crypt_sha256',
-            __('Crypt SHA512')       => 'crypt_sha512',
-        ];
-    }
-
+    /**
+     * Send HTTP message
+     */
     public static function sendHttp401(): void
     {
         header('HTTP/1.1 401 Unauthorized');
-        header('WWW-Authenticate: Basic realm="' . utf8_decode(htmlspecialchars_decode(dcCore::app()->blog->settings->get(self::id())->get('message'))) . '"');
+        header('WWW-Authenticate: Basic realm="' . utf8_decode(htmlspecialchars_decode(self::httpMessage())) . '"');
         exit(0);
     }
 }
