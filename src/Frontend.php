@@ -22,14 +22,14 @@ class Frontend extends dcNsProcess
 {
     public static function init(): bool
     {
-        self::$init = defined('DC_RC_PATH');
+        static::$init = defined('DC_RC_PATH');
 
-        return self::$init;
+        return static::$init;
     }
 
     public static function process(): bool
     {
-        if (!self::$init || !Utils::isActive()) {
+        if (!static::$init || !Utils::isActive()) {
             return false;
         }
 
