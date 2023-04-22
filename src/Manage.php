@@ -17,6 +17,7 @@ namespace Dotclear\Plugin\httpPassword;
 use dcCore;
 use dcNsProcess;
 use dcPage;
+use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Helper\Html\Form\{
     Checkbox,
@@ -31,7 +32,6 @@ use Dotclear\Helper\Html\Form\{
     Submit,
     Text
 };
-use dt;
 
 /**
  * Manage contributions list
@@ -241,7 +241,7 @@ class Manage extends dcNsProcess
                     echo
                     '<tr class="line">' .
                     '<td class="nowrap maximal">' . Html::escapeHTML($logs->f('log_msg')) . '</td>' .
-                    '<td class="nowrap count">' . Html::escapeHTML(dt::dt2str(__('%Y-%m-%d %H:%M'), $logs->f('log_dt'))) . '</td>' .
+                    '<td class="nowrap count">' . Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $logs->f('log_dt'))) . '</td>' .
                     '</tr>';
                 }
 
