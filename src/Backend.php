@@ -41,7 +41,6 @@ class Backend extends dcNsProcess
             dcPage::getPF(My::id() . '/icon.png'),
             preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
             dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-                dcAuth::PERMISSION_USAGE,
                 My::PERMISSION,
             ]), dcCore::app()->blog->id)
         );
