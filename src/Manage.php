@@ -40,18 +40,21 @@ class Manage extends dcNsProcess
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN') && dcCore::app()->auth->check(
-            dcCore::app()->auth->makePermissions([
-                My::PERMISSION,
-            ]), dcCore::app()->blog->id
-        );
+        static::$init = defined('DC_CONTEXT_ADMIN')
+            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog) // nullsafe
+            && dcCore::app()->auth->check(
+                dcCore::app()->auth->makePermissions([
+                    My::PERMISSION,
+                ]),
+                dcCore::app()->blog->id
+            );
 
         return static::$init;
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!static::$init || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return false;
         }
 
@@ -67,6 +70,7 @@ class Manage extends dcNsProcess
             return true;
         }
 
+        // save settings
         if ('savesettings' == $action) {
             $s = dcCore::app()->blog->settings->get(My::id());
             $s->put('active', !empty($_POST['active']));
@@ -85,6 +89,7 @@ class Manage extends dcNsProcess
             );
         }
 
+        // delete users logins
         if ('savelogins' == $action) {
             $logs = dcCore::app()->log->getLogs(['log_table' => My::id()]);
             if (!$logs->isEmpty()) {
@@ -105,6 +110,7 @@ class Manage extends dcNsProcess
             }
         }
 
+        // save users logins / passwords in frontend passwords file
         if ('savepasswords' == $action) {
             $passwords = self::getPasswords();
             $lines     = [];
@@ -153,7 +159,7 @@ class Manage extends dcNsProcess
 
     public static function render(): void
     {
-        if (!static::$init) {
+        if (!static::$init || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return;
         }
 
@@ -173,7 +179,7 @@ class Manage extends dcNsProcess
         ]) .
         dcPage::notices() .
 
-        # Filters select menu list
+        // Filters select menu list
         (new Form('section_menu'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()))->method('get')->fields([
             (new Para())->class('anchor-nav')->items([
                 (new Label(__('Select section:')))->for('part')->class('classic'),
@@ -185,6 +191,7 @@ class Manage extends dcNsProcess
 
         '<h3>' . array_search($part, My::sectionCombo()) . '</h3>';
 
+        // settigns form
         if ('settings' == $part) {
             echo
             (new Form('section_settings'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => 'settings']))->method('post')->fields([
@@ -214,6 +221,7 @@ class Manage extends dcNsProcess
             ])->render();
         }
 
+        // delete logins form
         if ('logins' == $part) {
             $logs = dcCore::app()->log->getLogs(['log_table' => My::id()]);
             if ($logs->isEmpty()) {
@@ -250,6 +258,7 @@ class Manage extends dcNsProcess
             }
         }
 
+        // existing logins/passwords form
         if ('passwords' == $part) {
             $passwords = self::getPasswords();
 
@@ -295,6 +304,7 @@ class Manage extends dcNsProcess
                 ])->render();
             }
 
+            // new login form
             echo
             (new Form('section_new'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => $part]))->method('post')->fields([
                 (new Text('h3', Html::escapeHTML(__('Add a user')))),
@@ -320,6 +330,11 @@ class Manage extends dcNsProcess
         dcPage::closeModule();
     }
 
+    /**
+     * Get page section.
+     *
+     * @return  string  The section
+     */
     private static function getSection(): string
     {
         $part = $_REQUEST['part'] ?? 'settings';
@@ -330,6 +345,11 @@ class Manage extends dcNsProcess
         return $part;
     }
 
+    /**
+     * Get existing passwords from file.
+     *
+     * @return  array<string,string>    The passwords list
+     */
     private static function getPasswords(): array
     {
         $passwords = [];

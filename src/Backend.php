@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\httpPassword;
 
-use dcAuth;
 use dcAdmin;
 use dcCore;
 use dcPage;
@@ -31,10 +30,11 @@ class Backend extends dcNsProcess
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!static::$init || is_null(dcCore::app()->auth) || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return false;
         }
 
+        // add backend sidebar menu icon
         dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
             My::name(),
             dcCore::app()->adminurl->get('admin.plugin.' . My::id()),

@@ -28,10 +28,11 @@ class Prepend extends dcNsProcess
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!static::$init || is_null(dcCore::app()->auth)) {
             return false;
         }
 
+        // register module permission
         dcCore::app()->auth->setPermissionType(
             My::PERMISSION,
             __('Manage http password blog protection')

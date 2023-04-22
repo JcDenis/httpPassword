@@ -20,9 +20,15 @@ class Utils
 {
     /**
      * Crypt password
+     *
+     * @param   string  $secret     The secret
+     *
+     * @return  string  The crypt password (empty on error)
      */
     public static function crypt(?string $secret): string
     {
+        $secret = (string) $secret;
+
         switch (self::cryptMethod()) {
             case 'plaintext':
                 $saltlen = -1;
@@ -72,43 +78,53 @@ class Utils
             $secret = crypt($secret, $salt);
         }
 
-        return($secret);
+        return $secret;
     }
 
     /**
      * Setting: active
+     *
+     * @return  bool    True if module is active
      */
     public static function isActive(): bool
     {
-        return (bool) dcCore::app()->blog->settings->get(My::id())->get('active');
+        return !is_null(dcCore::app()->blog) && (bool) dcCore::app()->blog->settings->get(My::id())->get('active');
     }
 
     /**
      * Setting: crypt
+     *
+     * @return  string  The crypt method
      */
     public static function cryptMethod(): string
     {
-        return (string) dcCore::app()->blog->settings->get(My::id())->get('crypt');
+        return is_null(dcCore::app()->blog) ? '' : (string) dcCore::app()->blog->settings->get(My::id())->get('crypt');
     }
 
     /**
      * Setting: message
+     *
+     * @return  string  The frontend message
      */
     public static function httpMessage(): string
     {
-        return (string) dcCore::app()->blog->settings->get(My::id())->get('message');
+        return is_null(dcCore::app()->blog) ? '' : (string) dcCore::app()->blog->settings->get(My::id())->get('message');
     }
 
     /**
      * Get passwords file path
+     *
+     * @return  string  The passwords file path (empty on error)
      */
     public static function passwordFile(): string
     {
-        return dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . My::FILE_PASSWORD;
+        return is_null(dcCore::app()->blog) ? '' : dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . My::FILE_PASSWORD;
     }
 
     /**
      * Check passwords file
+     *
+     * @return  bool    True if passwords file is writable
      */
     public static function isWritable(): bool
     {

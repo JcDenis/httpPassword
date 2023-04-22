@@ -33,7 +33,12 @@ class Frontend extends dcNsProcess
             return false;
         }
 
+        // check password on frontend
         dcCore::app()->addBehavior('publicPrependV2', function (): void {
+            // nullsafe
+            if (is_null(dcCore::app()->blog)) {
+                return;
+            }
             $PHP_AUTH_USER = $PHP_AUTH_PW = '';
 
             if (isset($_SERVER['PHP_AUTH_USER']) and isset($_SERVER['PHP_AUTH_PW'])) {
