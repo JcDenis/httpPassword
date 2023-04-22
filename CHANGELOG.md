@@ -1,3 +1,11 @@
+1.2 - 2023.04.22
+- require dotclear 2.26
+- add plugin Uninstaller features
+- use latest dotclear namespace
+- fix static init
+- fix permission
+- code doc and review
+
 1.1 - 2023.03.25
 - require dotclear 2.26
 - use namespace
