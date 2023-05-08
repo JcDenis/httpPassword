@@ -16,16 +16,22 @@ namespace Dotclear\Plugin\httpPassword;
 
 use dcCore;
 
+/**
+ * This module definitions.
+ */
 class My
 {
-    /** @var string This plugin permissions */
+    /** @var    string  This plugin permissions */
     public const PERMISSION = 'httpPassword';
 
-    /** @var string Passwords file name */
+    /** @var    string  Passwords file name */
     public const FILE_PASSWORD = '.htpasswd';
 
+    /** @var    string  This module required php version */
+    public const PHP_MIN = '7.4';
+
     /**
-     * This module id
+     * This module id.
      */
     public static function id(): string
     {
@@ -33,15 +39,35 @@ class My
     }
 
     /**
-     * This module name
+     * This module name.
      */
     public static function name(): string
     {
-        return __((string) dcCore::app()->plugins->moduleInfo(self::id(), 'name'));
+        $name = dcCore::app()->plugins->moduleInfo(self::id(), 'name');
+
+        return __(is_string($name) ? $name : self::id());
     }
 
     /**
-     * Encryption methods combo
+     * This module path.
+     */
+    public static function path(): string
+    {
+        return dirname(__DIR__);
+    }
+
+    /**
+     * Check this module PHP version compliant.
+     */
+    public static function phpCompliant(): bool
+    {
+        return version_compare(phpversion(), self::PHP_MIN, '>=');
+    }
+
+    /**
+     * Encryption methods combo.
+     *
+     * @return  array<string,string>
      */
     public static function cryptCombo(): array
     {
@@ -57,7 +83,9 @@ class My
     }
 
     /**
-     * Admin section menu
+     * Admin section menu.
+     *
+     * @return  array<string,string>
      */
     public static function sectionCombo(): array
     {
