@@ -27,9 +27,6 @@ class My
     /** @var    string  Passwords file name */
     public const FILE_PASSWORD = '.htpasswd';
 
-    /** @var    string  This module required php version */
-    public const PHP_MIN = '7.4';
-
     /**
      * This module id.
      */
@@ -54,14 +51,6 @@ class My
     public static function path(): string
     {
         return dirname(__DIR__);
-    }
-
-    /**
-     * Check this module PHP version compliant.
-     */
-    public static function phpCompliant(): bool
-    {
-        return version_compare(phpversion(), self::PHP_MIN, '>=');
     }
 
     /**
