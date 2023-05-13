@@ -1,3 +1,7 @@
+1.3 - 2023.05.13
+- require dotclear 2.26
+- fix type hint and nullsafe warnings
+
 1.2 - 2023.04.22
 - require dotclear 2.26
 - add plugin Uninstaller features
