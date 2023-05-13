@@ -98,7 +98,7 @@ class Utils
      */
     public static function cryptMethod(): string
     {
-        return is_null(dcCore::app()->blog) ? '' : (string) dcCore::app()->blog->settings->get(My::id())->get('crypt');
+        return !is_null(dcCore::app()->blog) && is_string(dcCore::app()->blog->settings->get(My::id())->get('crypt')) ? dcCore::app()->blog->settings->get(My::id())->get('crypt') : '';
     }
 
     /**
@@ -108,7 +108,7 @@ class Utils
      */
     public static function httpMessage(): string
     {
-        return is_null(dcCore::app()->blog) ? '' : (string) dcCore::app()->blog->settings->get(My::id())->get('message');
+        return !is_null(dcCore::app()->blog) && is_string(dcCore::app()->blog->settings->get(My::id())->get('message')) ? dcCore::app()->blog->settings->get(My::id())->get('message') : '';
     }
 
     /**

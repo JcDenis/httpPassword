@@ -216,7 +216,7 @@ class Manage extends dcNsProcess
                     (new Submit(['save']))->value(__('Save')),
                     (new Hidden(['action'], 'savesettings')),
                     (new Hidden(['part'], $part)),
-                    (new Text('', dcCore::app()->formNonce())),
+                    dcCore::app()->formNonce(false),
                 ]),
             ])->render();
         }
@@ -234,7 +234,7 @@ class Manage extends dcNsProcess
                         (new Submit(['save']))->value(__('Clear logs')),
                         (new Hidden(['action'], 'savelogins')),
                         (new Hidden(['part'], $part)),
-                        (new Text('', dcCore::app()->formNonce())),
+                        dcCore::app()->formNonce(false),
                     ]),
                 ])->render() .
 
@@ -246,10 +246,12 @@ class Manage extends dcNsProcess
                 '</tr></thead<tbody>';
 
                 while ($logs->fetch()) {
+                    $msg = is_string($logs->f('log_msg')) ? $logs->f('log_msg') : '';
+                    $dt  = is_string($logs->f('log_dt')) ? $logs->f('log_dt') : '';
                     echo
                     '<tr class="line">' .
-                    '<td class="nowrap maximal">' . Html::escapeHTML($logs->f('log_msg')) . '</td>' .
-                    '<td class="nowrap count">' . Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $logs->f('log_dt'))) . '</td>' .
+                    '<td class="nowrap maximal">' . Html::escapeHTML($msg) . '</td>' .
+                    '<td class="nowrap count">' . Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $dt)) . '</td>' .
                     '</tr>';
                 }
 
@@ -299,7 +301,7 @@ class Manage extends dcNsProcess
                     (new Para())->items([
                         (new Hidden(['action'], 'savepasswords')),
                         (new Hidden(['part'], $part)),
-                        (new Text('', dcCore::app()->formNonce())),
+                        dcCore::app()->formNonce(false),
                     ]),
                 ])->render();
             }
@@ -322,7 +324,7 @@ class Manage extends dcNsProcess
                     (new Submit(['add']))->value(__('Save')),
                     (new Hidden(['action'], 'savepasswords')),
                     (new Hidden(['part'], $part)),
-                    (new Text('', dcCore::app()->formNonce())),
+                    dcCore::app()->formNonce(false),
                 ]),
             ])->render();
         }

@@ -17,6 +17,7 @@ namespace Dotclear\Plugin\httpPassword;
 use dcAdmin;
 use dcCore;
 use dcPage;
+use dcMenu;
 use dcNsProcess;
 
 class Backend extends dcNsProcess
@@ -35,15 +36,17 @@ class Backend extends dcNsProcess
         }
 
         // add backend sidebar menu icon
-        dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
-            My::name(),
-            dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
-            dcPage::getPF(My::id() . '/icon.png'),
-            preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
-            dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-                My::PERMISSION,
-            ]), dcCore::app()->blog->id)
-        );
+        if ((dcCore::app()->menu[dcAdmin::MENU_PLUGINS] instanceof dcMenu)) {
+            dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
+                My::name(),
+                dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
+                dcPage::getPF(My::id() . '/icon.png'),
+                preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+                dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+                    My::PERMISSION,
+                ]), dcCore::app()->blog->id)
+            );
+        }
 
         return true;
     }

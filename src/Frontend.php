@@ -79,7 +79,7 @@ class Frontend extends dcNsProcess
                 if (!$logs->isEmpty()) {
                     $ids = [];
                     while ($logs->fetch()) {
-                        $ids[] = (int) $logs->f('log_id');
+                        $ids[] = is_numeric($logs->f('log_id')) ? (int) $logs->f('log_id') : 0;
                     }
                     $logs = dcCore::app()->log->delLogs($ids);
                 }
