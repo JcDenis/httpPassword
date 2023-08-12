@@ -15,8 +15,11 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\httpPassword;
 
 use dcCore;
-use dcNsProcess;
-use dcPage;
+use Dotclear\Core\Backend\{
+    Notices,
+    Page
+};
+use Dotclear\Core\Process;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Helper\Html\Form\{
@@ -36,30 +39,21 @@ use Dotclear\Helper\Html\Form\{
 /**
  * Manage contributions list
  */
-class Manage extends dcNsProcess
+class Manage extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN')
-            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog) // nullsafe
-            && dcCore::app()->auth->check(
-                dcCore::app()->auth->makePermissions([
-                    My::PERMISSION,
-                ]),
-                dcCore::app()->blog->id
-            );
-
-        return static::$init;
+        return self::status(My::checkContext(My::MANAGE));
     }
 
     public static function process(): bool
     {
-        if (!static::$init || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
+        if (!self::status() || is_null(dcCore::app()->blog)) {
             return false;
         }
 
         if (!Utils::isWritable()) {
-            dcPage::addWarningNotice(
+            Notices::addWarningNotice(
                 __('No write permissions on blogs directories.')
             );
         }
@@ -72,21 +66,18 @@ class Manage extends dcNsProcess
 
         // save settings
         if ('savesettings' == $action) {
-            $s = dcCore::app()->blog->settings->get(My::id());
+            $s = My::settings();
             $s->put('active', !empty($_POST['active']));
             $s->put('crypt', in_array((string) $_POST['crypt'], My::cryptCombo()) ? $_POST['crypt'] : 'paintext');
             $s->put('message', (string) $_POST['message']);
 
             dcCore::app()->blog->triggerBlog();
 
-            dcPage::addSuccessNotice(
+            Notices::addSuccessNotice(
                 __('Settings successfully updated.')
             );
 
-            dcCore::app()->adminurl->redirect(
-                'admin.plugin.' . My::id(),
-                ['part' => $part]
-            );
+            My::redirect(['part' => $part]);
         }
 
         // delete users logins
@@ -99,14 +90,11 @@ class Manage extends dcNsProcess
                 }
                 $logs = dcCore::app()->log->delLogs($ids);
 
-                dcPage::addSuccessNotice(
+                Notices::addSuccessNotice(
                     __('Logs successfully cleared.')
                 );
 
-                dcCore::app()->adminurl->redirect(
-                    'admin.plugin.' . My::id(),
-                    ['part' => $part]
-                );
+                My::redirect(['part' => $part]);
             }
         }
 
@@ -144,14 +132,11 @@ class Manage extends dcNsProcess
 
             dcCore::app()->blog->triggerBlog();
 
-            dcPage::addSuccessNotice(
+            Notices::addSuccessNotice(
                 __('Logins successfully updated.')
             );
 
-            dcCore::app()->adminurl->redirect(
-                'admin.plugin.' . My::id(),
-                ['part' => $part]
-            );
+            My::redirect(['part' => $part]);
         }
 
         return true;
@@ -159,33 +144,33 @@ class Manage extends dcNsProcess
 
     public static function render(): void
     {
-        if (!static::$init || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
+        if (!self::status() || is_null(dcCore::app()->blog)) {
             return;
         }
 
         $part = self::getSection();
 
-        dcPage::openModule(
+        Page::openModule(
             My::name(),
-            dcPage::jsPageTabs() .
-            dcPage::jsModuleLoad(My::id() . '/js/backend.js')
+            Page::jsPageTabs() .
+            My::jsLoad('backend')
         );
 
         echo
-        dcPage::breadcrumb([
+        Page::breadcrumb([
             __('Plugins')                           => '',
-            My::name()                              => dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
+            My::name()                              => My::manageUrl(),
             array_search($part, My::sectionCombo()) => '',
         ]) .
-        dcPage::notices() .
+        Notices::getNotices() .
 
         // Filters select menu list
-        (new Form('section_menu'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()))->method('get')->fields([
+        (new Form('section_menu'))->action(My::manageUrl())->method('get')->fields([
             (new Para())->class('anchor-nav')->items([
                 (new Label(__('Select section:')))->for('part')->class('classic'),
                 (new Select('part'))->default($part)->items(My::sectionCombo()),
                 (new Submit(['go']))->value(__('Ok')),
-                (new Hidden(['p'], My::id())),
+                ... My::hiddenFields(),
             ]),
         ])->render() .
 
@@ -194,7 +179,7 @@ class Manage extends dcNsProcess
         // settigns form
         if ('settings' == $part) {
             echo
-            (new Form('section_settings'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => 'settings']))->method('post')->fields([
+            (new Form('section_settings'))->action(My::manageUrl())->method('post')->fields([
                 // active
                 (new Para())->items([
                     (new Checkbox('active', Utils::isActive()))->value(1),
@@ -215,8 +200,7 @@ class Manage extends dcNsProcess
                 (new Div())->class('clear')->items([
                     (new Submit(['save']))->value(__('Save')),
                     (new Hidden(['action'], 'savesettings')),
-                    (new Hidden(['part'], $part)),
-                    dcCore::app()->formNonce(false),
+                    ... My::hiddenFields(['part' => $part]),
                 ]),
             ])->render();
         }
@@ -229,12 +213,13 @@ class Manage extends dcNsProcess
                 '<p>' . __('Logins history is empty.') . '</p>';
             } else {
                 echo
-                (new Form('section_logins'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => 'logins']))->method('post')->fields([
+                (new Form('section_logins'))->action(My::manageUrl())->method('post')->fields([
                     (new Para())->items([
                         (new Submit(['save']))->value(__('Clear logs')),
-                        (new Hidden(['action'], 'savelogins')),
-                        (new Hidden(['part'], $part)),
-                        dcCore::app()->formNonce(false),
+                        ... My::hiddenFields([
+                            'action' => 'savelogins',
+                            'part'   => $part,
+                        ]),
                     ]),
                 ])->render() .
 
@@ -285,7 +270,7 @@ class Manage extends dcNsProcess
                 }
 
                 echo
-                (new Form('section_passwords'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => $part]))->method('post')->fields([
+                (new Form('section_passwords'))->action(My::manageUrl())->method('post')->fields([
                     (new Text(
                         '',
                         '<div class="table-outer"><table>' .
@@ -300,15 +285,14 @@ class Manage extends dcNsProcess
                     )),
                     (new Para())->items([
                         (new Hidden(['action'], 'savepasswords')),
-                        (new Hidden(['part'], $part)),
-                        dcCore::app()->formNonce(false),
+                        ... My::hiddenFields(['part' => $part]),
                     ]),
                 ])->render();
             }
 
             // new login form
             echo
-            (new Form('section_new'))->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => $part]))->method('post')->fields([
+            (new Form('section_new'))->action(My::manageUrl())->method('post')->fields([
                 (new Text('h3', Html::escapeHTML(__('Add a user')))),
                 // login
                 (new Para())->items([
@@ -322,14 +306,15 @@ class Manage extends dcNsProcess
                 ]),
                 (new Para())->items([
                     (new Submit(['add']))->value(__('Save')),
-                    (new Hidden(['action'], 'savepasswords')),
-                    (new Hidden(['part'], $part)),
-                    dcCore::app()->formNonce(false),
+                    ... My::hiddenFields([
+                        'action' => 'savepasswords',
+                        'part'   => $part,
+                    ]),
                 ]),
             ])->render();
         }
 
-        dcPage::closeModule();
+        Page::closeModule();
     }
 
     /**

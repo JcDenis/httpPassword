@@ -14,39 +14,22 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\httpPassword;
 
-use dcAdmin;
-use dcCore;
-use dcPage;
-use dcMenu;
-use dcNsProcess;
+use Dotclear\Core\Process;
 
-class Backend extends dcNsProcess
+class Backend extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN');
-
-        return static::$init;
+        return self::status(My::checkContext(My::BACKEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init || is_null(dcCore::app()->auth) || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
+        if (!self::status()) {
             return false;
         }
 
-        // add backend sidebar menu icon
-        if ((dcCore::app()->menu[dcAdmin::MENU_PLUGINS] instanceof dcMenu)) {
-            dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
-                My::name(),
-                dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
-                dcPage::getPF(My::id() . '/icon.svg'),
-                preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
-                dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-                    My::PERMISSION,
-                ]), dcCore::app()->blog->id)
-            );
-        }
+        My::addBackendMenuItem();
 
         return true;
     }

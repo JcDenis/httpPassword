@@ -15,30 +15,25 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\httpPassword;
 
 use dcCore;
-use dcNsProcess;
+use Dotclear\Core\Process;
 use Exception;
 
-class Install extends dcNsProcess
+class Install extends Process
 {
     public static function init(): bool
     {
-        if (defined('DC_CONTEXT_ADMIN')) {
-            $version      = dcCore::app()->plugins->moduleInfo(My::id(), 'version');
-            static::$init = is_string($version) ? dcCore::app()->newVersion(My::id(), $version) : true;
-        }
-
-        return static::$init;
+        return self::status(My::checkContext(My::INSTALL));
     }
 
     public static function process(): bool
     {
-        if (!static::$init || is_null(dcCore::app()->blog)) {
+        if (!self::status()) {
             return false;
         }
 
         try {
             // Set settings
-            $s = dcCore::app()->blog->settings->get(My::id());
+            $s = My::settings();
             $s->put('active', false, 'boolean', 'Enable plugin', false, false);
             $s->put('crypt', 'crypt_md5', 'string', 'Crypt algorithm', false, false);
             $s->put('message', 'Private space', 'String', 'Personalized message on Authentication popup', false, false);

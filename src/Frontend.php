@@ -16,20 +16,18 @@ namespace Dotclear\Plugin\httpPassword;
 
 use dcCore;
 use dcLog;
-use dcNsProcess;
+use Dotclear\Core\Process;
 
-class Frontend extends dcNsProcess
+class Frontend extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_RC_PATH');
-
-        return static::$init;
+        return self::status(My::checkContext(My::FRONTEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init || !Utils::isActive()) {
+        if (!self::status() || !Utils::isActive()) {
             return false;
         }
 
