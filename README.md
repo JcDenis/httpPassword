@@ -1,24 +1,21 @@
 # README
 
 [![Release](https://img.shields.io/badge/release-1.4-a2cbe9.svg)](https://git.dotclear.watch/JcDenis/httpPassword/releases)
-[![Date](https://img.shields.io/badge/date-2023.08.12-c44d58.svg)](https://git.dotclear.watch/JcDenis/httpPassword/releases)
+![Date](https://img.shields.io/badge/date-2023.08.12-c44d58.svg)
 [![Dotclear](https://img.shields.io/badge/dotclear-v2.27-137bbb.svg)](https://fr.dotclear.org/download)
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/httpPassword)
-[![License](https://img.shields.io/github/license/JcDenis/httpPassword)](https://git.dotclear.watch/JcDenis/httpPassword/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--2.0-ececec.svg)](https://git.dotclear.watch/JcDenis/httpPassword/src/branch/master/LICENSE)
 
-## WHAT IS HTTPPASSWORD ?
+## ABOUT
 
-_httpPassword_ is a plugin for the open-source 
-web publishing software called Dotclear.
+_httpPassword_ is a plugin for the open-source web publishing software called [Dotclear](https://www.dotclear.org).
 
-Its helps to manage .httppassword files to make a blog private.
+> Help to manage .httppassword files to make a blog private.
 
 ## REQUIREMENTS
 
-_httpPassword_ requires: 
-
-* Dotclear 2.27
-* PHP 7.4+
+* Dotclear 2.28
+* PHP 8.1+
 * Write permissions on blogs directories
 
 ## USAGE
@@ -30,14 +27,15 @@ Manage settings, last logins, authorized users from sidebar menu _Http password_
 
 ## LINKS
 
-* License : [GNU GPL v2](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html)
-* Source & contribution : [Gitea Page](https://git.dotclear.watch/JcDenis/httpPassword) or [GitHub Page](https://github.com/JcDenis/httpPassword)
-* Packages & details: [Gitea Page](https://git.dotclear.watch/JcDenis/httpPassword/releases) or [Dotaddict Page](https://plugins.dotaddict.org/dc2/details/httpPassword)
-* Discussion & Help: [Dotclear Forum](http://forum.dotclear.org/viewtopic.php?pid=331158)
+* [License](https://git.dotclear.watch/JcDenis/httpPassword/src/branch/master/LICENSE)
+* [Packages & details](https://git.dotclear.watch/JcDenis/httpPassword/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/httpPassword))
+* [Sources & contributions](https://git.dotclear.watch/JcDenis/httpPassword) (or on [GitHub](https://github.com/JcDenis/httpPassword))
+* [Issues & security](https://git.dotclear.watch/JcDenis/httpPassword/issues) (or on [GitHub](https://github.com/JcDenis/httpPassword/issues))
+* [Discuss & Help](http://forum.dotclear.org/viewtopic.php?pid=331158)
 
 ## CONTRIBUTORS
 
 * Frederic PLE (author)
-* Jean-Christian Denis
+* Jean-Christian Denis (latest)
 
 You are welcome to contribute to this code.

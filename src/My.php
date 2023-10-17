@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief httpPassword, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Frederic PLE and contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\httpPassword;
@@ -17,11 +7,20 @@ namespace Dotclear\Plugin\httpPassword;
 use Dotclear\Module\MyPlugin;
 
 /**
- * This module definitions.
+ * @brief       httpPassword My helper.
+ * @ingroup     httpPassword
+ *
+ * @author      Frederic PLE (author)
+ * @author      Jean-Christian Denis (latest)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class My extends MyPlugin
 {
-    /** @var    string  Passwords file name */
+    /**
+     * Passwords file name.
+     *
+     * @var     string  FILE_PASSWORD
+     */
     public const FILE_PASSWORD = '.htpasswd';
 
     /**

@@ -1,21 +1,19 @@
 <?php
-/**
- * @brief httpPassword, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Frederic PLE and contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\httpPassword;
 
-use dcCore;
+use Dotclear\App;
 
+/**
+ * @brief       httpPassword utils.
+ * @ingroup     httpPassword
+ *
+ * @author      Frederic PLE (author)
+ * @author      Jean-Christian Denis (latest)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Utils
 {
     /**
@@ -71,7 +69,7 @@ class Utils
 
         if ($saltlen > 0) {
             $salt .= substr(
-                sha1(dcCore::app()->getNonce() . date('U')),
+                sha1(App::nonce()->getNonce() . date('U')),
                 2,
                 $saltlen - strlen($salt)
             );
@@ -118,7 +116,7 @@ class Utils
      */
     public static function passwordFile(): string
     {
-        return is_null(dcCore::app()->blog) ? '' : dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . My::FILE_PASSWORD;
+        return App::blog()->isDefined() ? App::blog()->publicPath() . DIRECTORY_SEPARATOR . My::FILE_PASSWORD : '';
     }
 
     /**

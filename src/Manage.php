@@ -1,20 +1,10 @@
 <?php
-/**
- * @brief httpPassword, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Frederic PLE and contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\httpPassword;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\{
     Notices,
     Page
@@ -37,7 +27,12 @@ use Dotclear\Helper\Html\Form\{
 };
 
 /**
- * Manage contributions list
+ * @brief       httpPassword manage class.
+ * @ingroup     httpPassword
+ *
+ * @author      Frederic PLE (author)
+ * @author      Jean-Christian Denis (latest)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Manage extends Process
 {
@@ -48,7 +43,7 @@ class Manage extends Process
 
     public static function process(): bool
     {
-        if (!self::status() || is_null(dcCore::app()->blog)) {
+        if (!self::status() || !App::blog()->isDefined()) {
             return false;
         }
 
@@ -71,7 +66,7 @@ class Manage extends Process
             $s->put('crypt', in_array((string) $_POST['crypt'], My::cryptCombo()) ? $_POST['crypt'] : 'paintext');
             $s->put('message', (string) $_POST['message']);
 
-            dcCore::app()->blog->triggerBlog();
+            App::blog()->triggerBlog();
 
             Notices::addSuccessNotice(
                 __('Settings successfully updated.')
@@ -82,13 +77,13 @@ class Manage extends Process
 
         // delete users logins
         if ('savelogins' == $action) {
-            $logs = dcCore::app()->log->getLogs(['log_table' => My::id()]);
+            $logs = App::log()->getLogs(['log_table' => My::id()]);
             if (!$logs->isEmpty()) {
                 $ids = [];
                 while ($logs->fetch()) {
                     $ids[] = $logs->__get('log_id');
                 }
-                $logs = dcCore::app()->log->delLogs($ids);
+                $logs = App::log()->delLogs($ids);
 
                 Notices::addSuccessNotice(
                     __('Logs successfully cleared.')
@@ -130,7 +125,7 @@ class Manage extends Process
             }
             file_put_contents(Utils::passwordFile(), $contents);
 
-            dcCore::app()->blog->triggerBlog();
+            App::blog()->triggerBlog();
 
             Notices::addSuccessNotice(
                 __('Logins successfully updated.')
@@ -144,7 +139,7 @@ class Manage extends Process
 
     public static function render(): void
     {
-        if (!self::status() || is_null(dcCore::app()->blog)) {
+        if (!self::status() || !App::blog()->isDefined()) {
             return;
         }
 
@@ -207,7 +202,7 @@ class Manage extends Process
 
         // delete logins form
         if ('logins' == $part) {
-            $logs = dcCore::app()->log->getLogs(['log_table' => My::id()]);
+            $logs = App::log()->getLogs(['log_table' => My::id()]);
             if ($logs->isEmpty()) {
                 echo
                 '<p>' . __('Logins history is empty.') . '</p>';

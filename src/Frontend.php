@@ -1,23 +1,20 @@
 <?php
-/**
- * @brief httpPassword, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Frederic PLE and contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\httpPassword;
 
-use dcCore;
-use dcLog;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
+/**
+ * @brief       httpPassword frontend class.
+ * @ingroup     httpPassword
+ *
+ * @author      Frederic PLE (author)
+ * @author      Jean-Christian Denis (latest)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Frontend extends Process
 {
     public static function init(): bool
@@ -32,9 +29,8 @@ class Frontend extends Process
         }
 
         // check password on frontend
-        dcCore::app()->addBehavior('publicPrependV2', function (): void {
-            // nullsafe
-            if (is_null(dcCore::app()->blog)) {
+        App::behavior()->addBehavior('publicPrependV2', function (): void {
+            if (!App::blog()->isDefined()) {
                 return;
             }
             $PHP_AUTH_USER = $PHP_AUTH_PW = '';
@@ -44,19 +40,19 @@ class Frontend extends Process
                 $PHP_AUTH_PW   = $_SERVER['PHP_AUTH_PW'];
             } elseif (isset($_ENV['REMOTE_USER'])) {
                 [$PHP_AUTH_PW, $PHP_AUTH_USER] = explode(' ', $_ENV['REMOTE_USER'], 2);
-                [$PHP_AUTH_USER, $PHP_AUTH_PW] = explode(':', base64_decode($PHP_AUTH_USER));
+                [$PHP_AUTH_USER, $PHP_AUTH_PW] = explode(':', base64_decode((string) $PHP_AUTH_USER));
             }
             if ($PHP_AUTH_PW === '' or $PHP_AUTH_USER === '') {
                 Utils::sendHttp401();
             }
 
-            if (!is_file(dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . My::FILE_PASSWORD)) {
+            if (!is_file(App::blog()->publicPath() . DIRECTORY_SEPARATOR . My::FILE_PASSWORD)) {
                 header('HTTP/1.0 500 Internal Server Error');
                 echo 'httpPassword plugin is not well configured.';
                 exit(1);
             }
 
-            $htpasswd      = file(dcCore::app()->blog->public_path . DIRECTORY_SEPARATOR . My::FILE_PASSWORD, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $htpasswd      = file(App::blog()->publicPath() . DIRECTORY_SEPARATOR . My::FILE_PASSWORD, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             $authenticated = false;
             if ($htpasswd !== false) {
                 foreach ($htpasswd as $ligne) {
@@ -73,18 +69,18 @@ class Frontend extends Process
             if (!$authenticated) {
                 Utils::sendHttp401();
             } else {
-                $logs = dcCore::app()->log->getLogs(['log_table' => My::id(), 'log_msg' => $PHP_AUTH_USER]);
+                $logs = App::log()->getLogs(['log_table' => My::id(), 'log_msg' => $PHP_AUTH_USER]);
                 if (!$logs->isEmpty()) {
                     $ids = [];
                     while ($logs->fetch()) {
                         $ids[] = is_numeric($logs->f('log_id')) ? (int) $logs->f('log_id') : 0;
                     }
-                    $logs = dcCore::app()->log->delLogs($ids);
+                    $logs = App::log()->delLogs($ids);
                 }
-                $cursor = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcLog::LOG_TABLE_NAME);
+                $cursor = App::log()->openLogCursor();
                 $cursor->setField('log_table', My::id());
                 $cursor->setField('log_msg', $PHP_AUTH_USER);
-                dcCore::app()->log->addLog($cursor);
+                App::log()->addLog($cursor);
             }
         });
 
