@@ -75,7 +75,7 @@ class Frontend extends Process
                     while ($logs->fetch()) {
                         $ids[] = is_numeric($logs->f('log_id')) ? (int) $logs->f('log_id') : 0;
                     }
-                    $logs = App::log()->delLogs($ids);
+                    App::log()->delLogs($ids);
                 }
                 $cursor = App::log()->openLogCursor();
                 $cursor->setField('log_table', My::id());

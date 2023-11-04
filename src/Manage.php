@@ -83,7 +83,7 @@ class Manage extends Process
                 while ($logs->fetch()) {
                     $ids[] = $logs->__get('log_id');
                 }
-                $logs = App::log()->delLogs($ids);
+                App::log()->delLogs($ids);
 
                 Notices::addSuccessNotice(
                     __('Logs successfully cleared.')
@@ -190,7 +190,7 @@ class Manage extends Process
                 // message
                 (new Para())->items([
                     (new Label(__('Authentication message:')))->for('message'),
-                    (new Input('message'))->size(60)->maxlenght(255)->value(Utils::httpMessage()),
+                    (new Input('message'))->size(60)->maxlength(255)->value(Utils::httpMessage()),
                 ]),
                 (new Div())->class('clear')->items([
                     (new Submit(['save']))->value(__('Save')),
@@ -255,7 +255,7 @@ class Manage extends Process
                         Html::escapeHTML($login) .
                     '</td>' .
                     '<td class="nowrap">' .
-                        (new Input(['newpassword[' . Html::escapeHTML($login) . ']']))->size(60)->maxlenght(255)->render() .
+                        (new Input(['newpassword[' . Html::escapeHTML($login) . ']']))->size(60)->maxlength(255)->render() .
                     '</td>' .
                     '<td class="nowrap">' .
                         (new Submit(['edit[' . Html::escapeHTML($login) . ']']))->value(__('Change password'))->render() .
@@ -292,12 +292,12 @@ class Manage extends Process
                 // login
                 (new Para())->items([
                     (new Label(__('Login:')))->for('login'),
-                    (new Input('login'))->size(60)->maxlenght(255),
+                    (new Input('login'))->size(60)->maxlength(255),
                 ]),
                 // password
                 (new Para())->items([
                     (new Label(__('Password:')))->for('password'),
-                    (new Input('password'))->size(60)->maxlenght(255),
+                    (new Input('password'))->size(60)->maxlength(255),
                 ]),
                 (new Para())->items([
                     (new Submit(['add']))->value(__('Save')),
