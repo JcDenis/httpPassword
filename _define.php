@@ -18,9 +18,9 @@ $this->registerModule(
     'Http password',
     'Manage .htpasswd file to make the blog private',
     'Frederic PLE and contributors',
-    '1.5.2',
+    '1.6',
     [
-        'requires'    => [['core', '2.28']],
+        'requires'    => [['core', '2.36']],
         'permissions' => 'My',
         'type'        => 'plugin',
         'support'     => 'https://github.com/JcDenis/' . $this->id . '/issues',
