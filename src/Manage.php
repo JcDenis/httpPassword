@@ -5,26 +5,22 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\httpPassword;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\{
-    Notices,
-    Page
-};
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Html;
-use Dotclear\Helper\Html\Form\{
-    Checkbox,
-    Div,
-    Form,
-    Hidden,
-    Input,
-    Label,
-    Note,
-    Para,
-    Select,
-    Submit,
-    Text
-};
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Text;
 
 /**
  * @brief       httpPassword manage class.
