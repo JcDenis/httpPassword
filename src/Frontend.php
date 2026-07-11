@@ -75,7 +75,7 @@ class Frontend
                 if (!$logs->isEmpty()) {
                     $ids = [];
                     while ($logs->fetch()) {
-                        $ids[] = is_numeric($logs->f('log_id')) ? (int) $logs->f('log_id') : 0;
+                        $ids[] = $logs->intField('log_id');
                     }
                     App::log()->delLogs($ids);
                 }

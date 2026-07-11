@@ -224,8 +224,8 @@ class Manage
                 '</tr></thead<tbody>';
 
                 while ($logs->fetch()) {
-                    $msg = is_string($logs->f('log_msg')) ? $logs->f('log_msg') : '';
-                    $dt  = is_string($logs->f('log_dt')) ? $logs->f('log_dt') : '';
+                    $msg = $logs->strField('log_msg');
+                    $dt  = $logs->strField('log_dt');
                     echo
                     '<tr class="line">' .
                     '<td class="nowrap maximal">' . Html::escapeHTML($msg) . '</td>' .
