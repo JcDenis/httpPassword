@@ -37,14 +37,14 @@ class Frontend
             }
             $PHP_AUTH_USER = $PHP_AUTH_PW = '';
 
-            if (isset($_SERVER['PHP_AUTH_USER']) and isset($_SERVER['PHP_AUTH_PW'])) {
+            if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
                 $PHP_AUTH_USER = $_SERVER['PHP_AUTH_USER'];
                 $PHP_AUTH_PW   = $_SERVER['PHP_AUTH_PW'];
             } elseif (isset($_ENV['REMOTE_USER'])) {
-                [$PHP_AUTH_PW, $PHP_AUTH_USER] = explode(' ', $_ENV['REMOTE_USER'], 2);
+                [$PHP_AUTH_PW, $PHP_AUTH_USER] = explode(' ', is_string($_ENV['REMOTE_USER']) ? $_ENV['REMOTE_USER'] : '', 2);
                 [$PHP_AUTH_USER, $PHP_AUTH_PW] = explode(':', base64_decode((string) $PHP_AUTH_USER));
             }
-            if ($PHP_AUTH_PW === '' or $PHP_AUTH_USER === '') {
+            if ($PHP_AUTH_PW === '' || $PHP_AUTH_USER === '') {
                 Utils::sendHttp401();
             }
 
@@ -59,7 +59,7 @@ class Frontend
             if ($htpasswd !== false) {
                 foreach ($htpasswd as $ligne) {
                     [$cur_user, $cur_pass] = explode(':', trim($ligne), 2);
-                    if ($cur_user == $PHP_AUTH_USER and crypt($PHP_AUTH_PW, $cur_pass) == $cur_pass) {
+                    if ($cur_user === $PHP_AUTH_USER && is_string($PHP_AUTH_PW) && crypt($PHP_AUTH_PW, $cur_pass) === $cur_pass) {
                         $authenticated = true;
                     }
                     if ($authenticated) {

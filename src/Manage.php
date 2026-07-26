@@ -61,8 +61,8 @@ class Manage
         if ('savesettings' == $action) {
             $s = My::settings();
             $s->put('active', !empty($_POST['active']));
-            $s->put('crypt', in_array((string) $_POST['crypt'], My::cryptCombo()) ? $_POST['crypt'] : 'paintext');
-            $s->put('message', (string) $_POST['message']);
+            $s->put('crypt', is_string($_POST['crypt']) && in_array($_POST['crypt'], My::cryptCombo()) ? $_POST['crypt'] : 'paintext');
+            $s->put('message', is_string($_POST['message']) ? $_POST['message'] : '');
 
             App::blog()->triggerBlog();
 
@@ -79,7 +79,7 @@ class Manage
             if (!$logs->isEmpty()) {
                 $ids = [];
                 while ($logs->fetch()) {
-                    $ids[] = $logs->__get('log_id');
+                    $ids[] = $logs->intField('log_id');
                 }
                 App::log()->delLogs($ids);
 
@@ -95,7 +95,7 @@ class Manage
         if ('savepasswords' == $action) {
             $passwords = self::getPasswords();
             $lines     = [];
-            if (!empty($_POST['login']) && !empty($_POST['password'])) {
+            if (!empty($_POST['login']) && !empty($_POST['password']) && is_string($_POST['login']) && is_string($_POST['password'])) {
                 $lines[$_POST['login']] = Utils::crypt($_POST['password']);
             }
             foreach ($passwords as $l => $p) {
@@ -104,12 +104,13 @@ class Manage
                     continue;
                 }
                 // delete login
-                if (!empty($_POST['delete']) && array_key_exists($l, $_POST['delete'])) {
+                if (!empty($_POST['delete']) && is_array($_POST['delete']) && array_key_exists($l, $_POST['delete'])) {
                     continue;
                 }
                 // change password
-                if (!empty($_POST['edit']) && array_key_exists($l, $_POST['edit'])
-                                           && !empty($_POST['newpassword']) && array_key_exists($l, $_POST['newpassword'])
+                if (!empty($_POST['edit']) && is_array($_POST['edit']) && array_key_exists($l, $_POST['edit'])
+                                           && !empty($_POST['newpassword']) && is_array($_POST['newpassword']) && array_key_exists($l, $_POST['newpassword'])
+                                           && is_string($_POST['newpassword'][$l])
                 ) {
                     $lines[$l] = Utils::crypt($_POST['newpassword'][$l]);
                 } else {
@@ -149,11 +150,13 @@ class Manage
             My::jsLoad('backend')
         );
 
+        $section = array_search($part, My::sectionCombo());
+
         echo
         Page::breadcrumb([
-            __('Plugins')                           => '',
-            My::name()                              => My::manageUrl(),
-            array_search($part, My::sectionCombo()) => '',
+            __('Plugins')             => '',
+            My::name()                => My::manageUrl(),
+            $section ? $section : '-' => '',
         ]) .
         Notices::getNotices() .
 
@@ -317,7 +320,7 @@ class Manage
      */
     private static function getSection(): string
     {
-        $part = $_REQUEST['part'] ?? 'settings';
+        $part = isset($_REQUEST['part']) && is_string($_REQUEST['part']) ? $_REQUEST['part'] : 'settings';
         if (!in_array($part, My::sectionCombo()) || !Utils::isWritable()) {
             $part = 'settings';
         }
