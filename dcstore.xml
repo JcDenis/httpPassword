@@ -2,10 +2,10 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="httpPassword">
     <name>Http password</name>
-    <version>1.7</version>
+    <version>1.8</version>
     <author>Frederic PLE and contributors</author>
     <desc>Manage .htpasswd file to make the blog private</desc>
-    <file>https://github.com/JcDenis/httpPassword/releases/download/v1.7/plugin-httpPassword.zip</file>
+    <file>https://github.com/JcDenis/httpPassword/releases/download/v1.8/plugin-httpPassword.zip</file>
     <da:dcmin>2.39</da:dcmin>
     <da:details>https://github.com/JcDenis/httpPassword/src/branch/master/README.md</da:details>
     <da:support>https://github.com/JcDenis/httpPassword/issues</da:support>
