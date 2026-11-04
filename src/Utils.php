@@ -140,7 +140,7 @@ class Utils
     public static function sendHttp401(): void
     {
         header('HTTP/1.1 401 Unauthorized');
-        header('WWW-Authenticate: Basic realm="' . utf8_decode(htmlspecialchars_decode(self::httpMessage())) . '"');
+        header('WWW-Authenticate: Basic realm="' . mb_convert_encoding(htmlspecialchars_decode(self::httpMessage()), 'ISO-8859-1', 'UTF-8') . '"');
         exit(0);
     }
 }
