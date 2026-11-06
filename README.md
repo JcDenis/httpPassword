@@ -36,5 +36,6 @@ Manage settings, last logins, authorized users from sidebar menu _Http password_
 
 * Frederic PLE (author)
 * Jean-Christian Denis (latest)
+* Claude (AI assistant by Anthropic)
 
 You are welcome to contribute to this code.
