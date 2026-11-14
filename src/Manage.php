@@ -61,7 +61,7 @@ class Manage
         if ('savesettings' == $action) {
             $s = My::settings();
             $s->put('active', !empty($_POST['active']));
-            $s->put('crypt', is_string($_POST['crypt']) && in_array($_POST['crypt'], My::cryptCombo()) ? $_POST['crypt'] : 'paintext');
+            $s->put('crypt', is_string($_POST['crypt']) && in_array($_POST['crypt'], My::cryptCombo()) ? $_POST['crypt'] : 'plaintext');
             $s->put('message', is_string($_POST['message']) ? $_POST['message'] : '');
 
             App::blog()->triggerBlog();
@@ -110,7 +110,7 @@ class Manage
                 // change password
                 if (!empty($_POST['edit']) && is_array($_POST['edit']) && array_key_exists($l, $_POST['edit'])
                                            && !empty($_POST['newpassword']) && is_array($_POST['newpassword']) && array_key_exists($l, $_POST['newpassword'])
-                                           && is_string($_POST['newpassword'][$l])
+                                           && is_string($_POST['newpassword'][$l]) && $_POST['newpassword'][$l] !== ''
                 ) {
                     $lines[$l] = Utils::crypt($_POST['newpassword'][$l]);
                 } else {
@@ -186,7 +186,7 @@ class Manage
                     (new Label(__('Crypt algorithm:'), Label::OUTSIDE_LABEL_BEFORE))->for('crypt')->class('classic'),
                     (new Select('crypt'))->default(Utils::cryptMethod())->items(My::cryptCombo()),
                 ]),
-                (new Note())->text(__('Some web servers does not surpport plaintext (no) encryption.'))->class('form-note'),
+                (new Note())->text(__('Some web servers does not support plaintext (no) encryption.'))->class('form-note'),
                 (new Note())->text(__('If you change crypt algo, you must edit and resave each users passwords.'))->class('form-note'),
                 // message
                 (new Para())->items([
@@ -224,7 +224,7 @@ class Manage
                 '<thead><tr>' .
                 '<th scope="col" class="first">' . __('Login') . '</th>' .
                 '<th scope="col">' . __('Date') . '</th>' .
-                '</tr></thead<tbody>';
+                '</tr></thead><tbody>';
 
                 while ($logs->fetch()) {
                     $msg = $logs->strField('log_msg');
@@ -232,12 +232,12 @@ class Manage
                     echo
                     '<tr class="line">' .
                     '<td class="nowrap maximal">' . Html::escapeHTML($msg) . '</td>' .
-                    '<td class="nowrap count">' . Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $dt)) . '</td>' .
+                    '<td class="nowrap count">' . Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $dt, is_string($tz = App::auth()->getInfo('user_tz')) ? $tz : null)) . '</td>' .
                     '</tr>';
                 }
 
                 echo
-                '</table></div>';
+                '</tbody></table></div>';
             }
         }
 
@@ -275,9 +275,9 @@ class Manage
                         '<th scope="col" class="first nowrap">' . __('Login') . '</th>' .
                         '<th scope="col" class="first nowrap">' . __('New password') . '</th>' .
                         '<th scope="col" class="nowrap">' . __('Action') . '</th>' .
-                        '</tr></thead<tbody>' .
+                        '</tr></thead><tbody>' .
                         $lines .
-                        '</table></div>'
+                        '</tbody></table></div>'
                     )),
                     (new Para())->items([
                         (new Hidden(['action'], 'savepasswords')),
