@@ -1,3 +1,12 @@
+httpPassword 1.9 - 2026.11.14
+===========================================================
+* Add Claude to contributors
+* [fix] Login failed with no encryption, Blowfish or extended DES, and history kept only one login
+* [fix] Admin page: empty password change, history time zone, table markup, fallback encryption
+* [lang] Fix typos
+* [docs] Add a user guide in French, with screenshots
+* [docs] Add the admin help in English and French
+
 httpPassword 1.8 - 2026.11.05
 ===========================================================
 * Fix deprecated utf8_decode()

@@ -22,7 +22,7 @@ $this->registerModule(
     'Http password',
     'Manage .htpasswd file to make the blog private',
     'Frederic PLE and contributors',
-    '1.8',
+    '1.9',
     [
         'requires'    => [['core', '2.39']],
         'permissions' => 'My',
@@ -30,6 +30,6 @@ $this->registerModule(
         'support'     => 'https://github.com/JcDenis/' . $this->id . '/issues',
         'details'     => 'https://github.com/JcDenis/' . $this->id . '/',
         'repository'  => 'https://raw.githubusercontent.com/JcDenis/' . $this->id . '/master/dcstore.xml',
-        'date'        => '2026-11-04T23:34:03+00:00',
+        'date'        => '2026-11-14T21:30:43+00:00',
     ]
 );
