@@ -1,6 +1,5 @@
 httpPassword 1.9 - 2026.11.14
 ===========================================================
-* Add Claude to contributors
 * [fix] Login failed with no encryption, Blowfish or extended DES, and history kept only one login
 * [fix] Admin page: empty password change, history time zone, table markup, fallback encryption
 * [lang] Fix typos
