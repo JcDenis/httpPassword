@@ -7,7 +7,7 @@
     <desc>Manage .htpasswd file to make the blog private</desc>
     <file>https://github.com/JcDenis/httpPassword/releases/download/v1.8/plugin-httpPassword.zip</file>
     <da:dcmin>2.39</da:dcmin>
-    <da:details>https://github.com/JcDenis/httpPassword/src/branch/master/README.md</da:details>
+    <da:details>https://github.com/JcDenis/httpPassword/blob/master/README.md</da:details>
     <da:support>https://github.com/JcDenis/httpPassword/issues</da:support>
   </module>
 </modules>
