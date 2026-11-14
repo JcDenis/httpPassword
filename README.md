@@ -12,6 +12,8 @@ _httpPassword_ is a plugin for the open-source web publishing software called [D
 
 > Help to manage .httppassword files to make a blog private.
 
+A [user guide in French](https://github.com/JcDenis/httpPassword/blob/master/docs/fr/utilisation.md) is available.
+
 ## REQUIREMENTS
 
 * Dotclear 2.39
@@ -27,6 +29,7 @@ Manage settings, last logins, authorized users from sidebar menu _Http password_
 
 ## LINKS
 
+* [User guide (in French)](https://github.com/JcDenis/httpPassword/blob/master/docs/fr/utilisation.md)
 * [License](https://github.com/JcDenis/httpPassword/blob/master/LICENSE)
 * [Packages & details](https://github.com/JcDenis/httpPassword/releases) (or on [Repository](https://dotclear.org/plugin/detail/httpPassword))
 * [Sources & contributions](https://github.com/JcDenis/httpPassword)
