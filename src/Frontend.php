@@ -58,10 +58,14 @@ class Frontend
             $authenticated = false;
             if ($htpasswd !== false) {
                 foreach ($htpasswd as $ligne) {
-                    [$cur_user, $cur_pass] = explode(':', trim($ligne), 2);
-                    if ($cur_user === $PHP_AUTH_USER && is_string($PHP_AUTH_PW) && crypt($PHP_AUTH_PW, $cur_pass) === $cur_pass) {
-                        $authenticated = true;
+                    $cur = explode(':', trim($ligne), 2);
+                    if (count($cur) !== 2 || $cur[0] !== $PHP_AUTH_USER || !is_string($PHP_AUTH_PW) || $cur[1] === '') {
+                        continue;
                     }
+                    // Without encryption, passwords are stored as is
+                    $authenticated = Utils::cryptMethod() === 'plaintext' ?
+                        hash_equals($cur[1], $PHP_AUTH_PW) :
+                        hash_equals($cur[1], crypt($PHP_AUTH_PW, $cur[1]));
                     if ($authenticated) {
                         break;
                     }
@@ -71,13 +75,18 @@ class Frontend
             if (!$authenticated) {
                 Utils::sendHttp401();
             } else {
-                $logs = App::log()->getLogs(['log_table' => My::id(), 'log_msg' => $PHP_AUTH_USER]);
+                $logs = App::log()->getLogs(['log_table' => My::id()]);
                 if (!$logs->isEmpty()) {
                     $ids = [];
                     while ($logs->fetch()) {
-                        $ids[] = $logs->intField('log_id');
+                        // Keep only the last login of each user
+                        if ($logs->strField('log_msg') === $PHP_AUTH_USER) {
+                            $ids[] = $logs->intField('log_id');
+                        }
                     }
-                    App::log()->delLogs($ids);
+                    if ($ids !== []) {
+                        App::log()->delLogs($ids);
+                    }
                 }
                 $cursor = App::log()->openLogCursor();
                 $cursor->setField('log_table', My::id());

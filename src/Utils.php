@@ -40,7 +40,7 @@ class Utils
                 break;
             case 'crypt_ext_des':
                 $saltlen = 9;
-                $salt    = '';
+                $salt    = '_';
 
                 break;
             case 'crypt_md5':
@@ -49,10 +49,7 @@ class Utils
 
                 break;
             case 'crypt_blowfish':
-                $saltlen = 16;
-                $salt    = '$2$';
-
-                break;
+                return password_hash($secret, PASSWORD_BCRYPT);
             case 'crypt_sha256':
                 $saltlen = 16;
                 $salt    = '$5$';
