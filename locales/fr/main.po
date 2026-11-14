@@ -43,7 +43,7 @@ msgstr "Activer la protection du blog par mot de passe http"
 msgid "Crypt algorithm:"
 msgstr "Algorithme de cryptage :"
 
-msgid "Some web servers does not surpport plaintext (no) encryption."
+msgid "Some web servers does not support plaintext (no) encryption."
 msgstr "Certains serveurs web ne supportent pas le cryptage \"plaintext\"."
 
 msgid "If you change crypt algo, you must edit and resave each users passwords."
@@ -62,7 +62,7 @@ msgid "List of %s last logins."
 msgstr "Liste des %s derniers logins."
 
 msgid "Authorized users list is empty."
-msgstr "La listes des utilisateurs autorisés est vide."
+msgstr "La liste des utilisateurs autorisés est vide."
 
 msgid "List of %s authorized users."
 msgstr "Liste des %s utilisateurs autorisés."
